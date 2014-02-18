@@ -32,20 +32,15 @@ options.z_limit             = par.z_limit;%1.4;%will be removed in future releas
 
 options.bs                  = par.bin_size;%0.1;
 options.distance_window     = par.distance_window;%0.3;%[meters]
+options.neg_distance_window = par.neg_distance_window;
 if EPISODIC
-    options.distance_window = inf
+    options.distance_window = inf;
+    options.neg_distance_window = inf;
 end
-
-if isfield(par, 'neg_distance_window')
-    options.neg_distance_window = par.neg_distance_window;
-else
-    options.neg_distance_window = options.distance_window;
-end
-
 %% save the setting
 par.output_name = sprintf('preproc_data_bs1_repaired_distancewindow%.3din%.3d.mat', options.distance_window*100, options.neg_distance_window*100);
 par.distance_window = options.distance_window;
-par.neg_distance_window = options.distance_window;
+par.neg_distance_window = options.neg_distance_window;
 %% 
 %prefix = '/datagrid/nifti/data/20130314_yard_obstacle_maneuvers_no_bags/';
 %prefix = '/datagrid/nifti/data/floor_2013-03-07-15-48-00/';

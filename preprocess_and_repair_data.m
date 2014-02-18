@@ -115,7 +115,7 @@ end
 %%NEW 203-Oct-28lsqz = rescale_features( lsqz, options.scale, options.offset);%rescale pts
 %%NEW 203-Oct-28nlsqz = rescale_features( nlsqz, options.scale, options.offset);%rescale normalized pts
 
-if ~isempty(lsqz) && ~isempty(nlsqz)
+if ~isempty(lsqz) && ~isempty(nlsqz) && length(lsqz) > 2 && length(nlsqz) > 2
 
     %%NEW 2013-Oct-28
     roll = eulers(1)*pi/180;

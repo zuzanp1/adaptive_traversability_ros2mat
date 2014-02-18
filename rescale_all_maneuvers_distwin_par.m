@@ -29,14 +29,25 @@ options.key.narr_data       = -4;
 options.key.narr_data_under = -5;
 options.key.narr_data_rear  = -6;
 
-for SCALE = SCALES
-    options.z_limit             = 1.4;%will be removed in future releases, depends on PCL_MAX_Z in definitions.h (we do not want to consider all z values)
+options.z_limit             = par.z_limit;%will be removed in future releases, depends on PCL_MAX_Z in definitions.h (we do not want to consider all z values)
+options.bs                  = par.bin_size;
+options.distance_window     = par.distance_window;%[meters]
+options.neg_distance_window = par.neg_distance_window;%[meters]
+options.offset              = 0.07;%base_link offset w.r.t to ground.
+%
+prefix = par.data_man;
+pt = 0;
+scalepar = par;
+scale_man = [];
+if par.distance_window > par.neg_distance_window
+    scalepar.data_man = fullfile( prefix, 'scale', 'uncert');
+else
+    scalepar.data_man = fullfile( prefix, 'scale' );
+end
 
-    options.bs                  = 0.1;
-    options.distance_window     = par.distance_window;%[meters]
-    options.neg_distance_window = par.neg_distance_window;%[meters]
+for SCALE = SCALES
+
     options.scale               = SCALE;
-    options.offset              = 0.07;%base_link offset w.r.t to ground.
     %% 
     %prefix = '/datagrid/nifti/data/20130801_yard_pallets/';%%FIRST BATCH
     %prefix = '/datagrid/nifti/data/20130814_yard_pallets/';%SECOND BATCH
@@ -49,14 +60,15 @@ for SCALE = SCALES
     
     %prefix = '~/fuerte_workspace/sandbox/nifti_adaptive_traversability/matlab/';
     %prefix = '/datagrid/nifti/data/20130906_AT_episodes/episode001/';
-    prefix = par.data_man;
     if VISU
         hfig = figure; 
     end
     maneuvers = par.maneuvers;%select_file_type_with_prefix( dir(prefix), {'0', '1', '2', '3','4', '5', '6', '7', '8', '9'}, {'maneuver'});% maneuvers = maneuvers(3:end);
     for m = 1:length(maneuvers)
+        pt = pt + 1;
         mname = fullfile(prefix, maneuvers(m).name, filesep);
-        mname_out = fullfile(prefix, 'scaled', sprintf('%s_scale%.3dDEM%s', maneuvers(m).name, SCALE*100));
+        scale_man(pt).name = sprintf('%s_scale%.3dDEM', maneuvers(m).name, round(SCALE*100) );
+        mname_out = fullfile(scalepar.data_man, scale_man(pt).name );
         mkdir(mname_out);
         %load timestamps
         d = load( fullfile(mname, 'timestamps.txt' ) );%final position should be included here
@@ -86,6 +98,10 @@ for SCALE = SCALES
                 clf(hfig);
             else
                 desc = preprocess_and_repair_data(d, options);
+            end
+            if isempty(desc)
+                fprintf('Sample corrupted (no 3D points available)..skipping to another\n');
+                continue;
             end
             desc.is_final = 0;%indicates whether the sample is the last in the sequence
             if ( open )
@@ -129,4 +145,8 @@ for SCALE = SCALES
         
         fprintf('%s preprocessed!\n', mname);
     end
+end%end scales
+scalepar.maneuvers = scale_man;
+par.scaling = scalepar;
+
 end
