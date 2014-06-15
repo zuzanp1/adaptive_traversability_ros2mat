@@ -19,6 +19,15 @@ function par = getPreprocParams( string_id )
             par.data_man = '/datagrid/nifti/data/2014_AT_data/20140218_stairs_climbing/';
             par.scales = [0.9 0.8 1.1];
             
+        case '20140414_straight_corridor_pos'    
+            par.data_man = '/datagrid/nifti/data/2014_AT_data/20140414_straight_corridor/positive/';
+            par.scales = [0.9 0.8 1.1];
+            
+        case '20140414_straight_corridor_neg'
+            par.data_man = '/datagrid/nifti/data/2014_AT_data/20140414_straight_corridor/negative/';
+            par.neg_distance_window = 0.1;% 0.3 default
+            par.scales = [0.9 0.8 1.1];
+            
 %% episodes (trajectories only)
         case '20140128_prato_single_obst'
             par.data_man = '/datagrid/nifti/data/2014_AT_episodes/20140128_prato_single_obst/';
@@ -32,6 +41,11 @@ function par = getPreprocParams( string_id )
         case '20140210_along_chairs'
             par.data_man = '/datagrid/nifti/data/2014_AT_episodes/20140210_along_chairs/';
             par.episodic = 1;
+            
+            
+%% fail-cases
+        case '20140326_pallet_fails'
+            par.data_man = '/datagrid/nifti/data/2014_AT_fail_cases/20140326_pallet_fails/';
 
 %% otherwise            
         otherwise

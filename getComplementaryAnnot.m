@@ -18,7 +18,7 @@ time_stamps = zeros(1,L);
 mode_change = zeros(1,L);
 
 for i = 1:L
-    A(samples{i}.action.flipper_mode+1, i) = 1;%for the current control set the annot to zero -> allowed
+    A(samples{i}.action.flipper_mode+1, i) = (samples{i}.final_reward>0) + 2*(samples{i}.final_reward==0);%for the current control set the annot to zero -> allowed
     
     
     mode_c(i) = samples{i}.action.flipper_mode+1;
